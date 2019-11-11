@@ -44,6 +44,7 @@ class Piece:
         h = int(self.h)
         x = int(self.x)
         y = int(self.y)
+        #MAXIMUM MOVEMENT
         try:
             move = 1
             if direction == 1 or direction == 2:
@@ -128,40 +129,11 @@ class Operator:
     def apply(self, s):
         return self.state_transf(s)
 
-
-# moves a tile in the given direction in the current state given
-# and returns that new state
+#WIP
 def move(s, tile, dir):
-    '''Assuming it's legal to make the move, this computes
-     the new state resulting from moving the a tile to an available
-     location'''
+    
+      #Based on the assumption it is legal to move and tile is available
     new_state = copy_state(s)
-
-    curr_index = tile.y * 4 + tile.x
-    for width in range(tile.w):
-        for height in range(tile.h):
-            tile_index = int(curr_index + width + height * 4)
-
-            if dir == 3:
-                new_state[tile_index + 4] = s[tile_index]
-                if height == 0:
-                    new_state[tile_index] = "_"
-
-            elif dir == 1:
-                new_state[tile_index - 4] = s[tile_index]
-                if height == tile.h - 1:
-                    new_state[tile_index] = "_"
-
-            elif dir == 0:
-                new_state[tile_index + 1] = s[tile_index]
-                if width == 0 :
-                    new_state[tile_index] = "_"
-
-            else:
-                new_state[tile_index - 1] = s[tile_index]
-                if width == tile.w - 1:
-                    new_state[tile_index] = "_"
-
 
     return new_state
 
@@ -174,12 +146,9 @@ def goal_test(state):
 
 
 
-# translate a numerical direction into the corresponding
-# compass direction in the following format:
 #    1
 # 2     0
 #    3
-# on the condition that only 0 - 3 is passed in
 def translate_dir(num):
     dir = ''
     if num == 0:
@@ -194,8 +163,6 @@ def translate_dir(num):
 
 
 
-# returns the can_move function of the given piece in a
-# direction relative to the state
 def can_move(s, piece, direction):
     return piece.can_move(s, direction)
 
@@ -253,8 +220,11 @@ def h_custom(s):
     goal_y = int(s.index(GOAL_BLOCK) / 4) + 1
     total = 0
     empty_index = int(s.index('_'))
-    if ((empty_index+1)%4 != 0 and s[(empty_index+1)%4] != '_') \
-            or (s[(empty_index + 4) % 20] != '_'):
+    #check if edge case
+    #First case shows that empty index is below so prioritized
+    #Second case checks if the spaces are adjacent
+    #Not perfect yet
+    if ((empty_index+1)%4 != 0 and s[(empty_index+1)%4] != '_') or (s[(empty_index + 4) % 20] != '_'):
         total += 2
 
     for key in sorted(set(s) - set(['_'])): #all letters
@@ -265,11 +235,8 @@ def h_custom(s):
 
 
 
-#<HEURISTICS>
 HEURISTICS = {'h_custom':h_custom}
-#</HEURISTICS>
 
-# <STATE_VIS>
+
 def render_state(s):
     return printCurrentState(s)
-# </STATE_VIS>
