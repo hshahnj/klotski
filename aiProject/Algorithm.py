@@ -63,7 +63,7 @@ def IterateAStar(initial_state):
             # is a child
             if op.precond(S[0]):
                 new_state = op.state_transf(S[0])
-# ###WORKING ON IT
+
 #                 # index of occurrence in CLOSED
 #                 occur_closed = occurs_in(new_state, CLOSED)
 
@@ -84,15 +84,9 @@ def IterateAStar(initial_state):
 #                         COST[Problem.HASHCODE(new_state)] = new_cost
 #                         OPEN[occur_open] = [new_state, new_cost]
 
-#         # for all neighbors found, if it equals to states in OPEN,
-#         # delete it, shouldn't occur but juuuuust in case...
-#         for s2 in L:
-#             for i in range(len(OPEN)):
-#                 if Problem.DEEP_EQUALS(s2, OPEN[i][0]):
-#                     del OPEN[i]; break
 
-        OPEN = L + OPEN
-        OPEN.sort(key=lambda x: x[1])
+        # OPEN = L + OPEN
+        # OPEN.sort(key=lambda x: x[1])
 
 # determines if the given state is equal to any of the state
 # within the list and returns the index if it does exist

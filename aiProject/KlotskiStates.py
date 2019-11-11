@@ -1,9 +1,4 @@
-# The goal of the game is to manuever the tiles by "swapping" with the empty spaces
-# in such a way that the 2x2 block is located at the center bottom in order to remove that
-# tile in the "exit" opening at the center bottom of the board.
 
-
-#<INITIAL_STATE>
 GOAL_BLOCK = 'A'
 CREATE_INITIAL_STATE = lambda : ["B", "A", "A", "C",
                                  "B", "A", "A", "C",
@@ -216,7 +211,7 @@ GOAL_MESSAGE_FUNCTION = lambda s: goal_message(s)
 # totals up the number of tile square beneath the goal block
 # including whether or not the empty spaces are adjacent
 # and returns that value
-def h_custom(s):
+def heuristicFunction(s):
     goal_y = int(s.index(GOAL_BLOCK) / 4) + 1
     total = 0
     empty_index = int(s.index('_'))
@@ -227,7 +222,7 @@ def h_custom(s):
     if ((empty_index+1)%4 != 0 and s[(empty_index+1)%4] != '_') or (s[(empty_index + 4) % 20] != '_'):
         total += 2
 
-    for key in sorted(set(s) - set(['_'])): #all letters
+    for key in sorted(set(s) - set(['_'])): #all tiles
         piece = make_piece(s, key) #now you have piece object
         if (piece.y > goal_y):
             total += piece.w * piece.h
@@ -235,7 +230,7 @@ def h_custom(s):
 
 
 
-HEURISTICS = {'h_custom':h_custom}
+HEURISTICS = {'heuristicFunction':heuristicFunction}
 
 
 def render_state(s):
