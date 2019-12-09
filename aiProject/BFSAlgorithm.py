@@ -11,7 +11,7 @@ print('\nBFS Algorithm')
 iterationCount = None
 backTrackingLinks = {}
 
-
+#initialize BFS by preparing start state and running algorithm
 def initializeBFS():
     startState = Algorithm.START_STATE()
     print("Starting State of the Puzzle: ")
@@ -23,9 +23,10 @@ def initializeBFS():
     startBFS(startState)
     print(str(iterationCount) + " states examined.")
 
-
+# run algorithm
 def startBFS(startState):
     global iterationCount, backTrackingLinks
+
 
     openStates = [startState]
     closedStates = []
