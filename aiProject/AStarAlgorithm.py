@@ -1,6 +1,4 @@
-import sys
 import importlib
-
 
 # # #INIT
 # Algorithm = importlib.import_module(sys.argv[1]) #Import Module
@@ -13,14 +11,14 @@ import importlib
 Algorithm = importlib.import_module("KlotskiStates")
 heuristicChoice = "heuristicFunction"
 startState = Algorithm.START_STATE()
-heuristics = Algorithm.HEURISTICS[heuristicChoice]
+heuristics = Algorithm.heuristic[heuristicChoice]
 
-
-#Counting # of iterations
+# Counting # of iterations
 iterationCount = None
 
-#To trace steps
+# To trace steps
 backTrackingLinks = {}
+
 
 def initializeAStar():
     print("Starting State of the Puzzle:")
@@ -29,7 +27,7 @@ def initializeAStar():
     iterationCount = 0
     backTrackingLinks = {}
     startAStar(startState)
-    print(str(iterationCount)+" states examined.")
+    print(str(iterationCount) + " states examined.")
 
 
 # iterates through initial state using A* with given hueristics
@@ -50,26 +48,25 @@ def startAStar(startState):
         del openStates[0]
         closedStates.append(S)
 
-        if Algorithm.GOAL_TEST(S[0]):
-            print(Algorithm.GOAL_MESSAGE_FUNCTION(S[0]))
+        if Algorithm.goalTest(S[0]):
+            print(Algorithm.goalMessage(S[0]))
             backtrace(S[0])
             return
 
-#TEMPORARY iterationCountING AND PRINTING MEASURE
         iterationCount += 1
-        if (iterationCount % 32)==0:
-            # print(".",end="")
-            if (iterationCount % 128)==0:
-                print("iterationCount = "+str(iterationCount))
-                print("len(openStates)="+str(len(openStates)))
-                print("len(closedStates)="+str(len(closedStates)))
+        if (iterationCount % 32) == 0:
+            print(".", end="")
+            if (iterationCount % 128) == 0:
+                print("iterationCount = " + str(iterationCount))
+                print("len(openStates)=" + str(len(openStates)))
+                print("len(closedStates)=" + str(len(closedStates)))
         L = []
 
         # for each possible child in S (state)
-        for op in Algorithm.OPERATORS:
+        for op in Algorithm.getOperations:
             # is a child
-            if op.precond(S[0]):
-                new_state = op.state_transf(S[0])
+            if op.precondition(S[0]):
+                new_state = op.state_transfer(S[0])
 
                 # index of occurrence in closedStates
                 occur_closed = occurs_in(new_state, closedStates)
@@ -91,9 +88,9 @@ def startAStar(startState):
                         COST[Algorithm.HASHCODE(new_state)] = new_cost
                         openStates[occur_open] = [new_state, new_cost]
 
-
         openStates = L + openStates
         openStates.sort(key=lambda x: x[1])
+
 
 # determines if the given state is equal to any of the state
 # within the list and returns the index if it does exist
@@ -118,9 +115,9 @@ def backtrace(S):
     path.reverse()
     print("Solution path: ")
     for s in path:
-        print(Algorithm.DESCRIBE_STATE(s))
+        print(Algorithm.describeCurrentState(s))
     return path
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     initializeAStar()

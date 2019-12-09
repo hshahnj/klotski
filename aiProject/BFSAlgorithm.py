@@ -1,4 +1,3 @@
-import sys
 import importlib
 
 Algorithm = importlib.import_module('KlotskiStates')
@@ -11,7 +10,7 @@ backTrackingLinks = {}
 def initializeBFS():
     startState = Algorithm.START_STATE()
     print("Starting State of the Puzzle: ")
-    print(Algorithm.DESCRIBE_STATE(startState))
+    print(Algorithm.describeCurrentState(startState))
 
     global iterationCount, backTrackingLinks
     iterationCount = 0
@@ -19,47 +18,47 @@ def initializeBFS():
     startBFS(startState)
     print(str(iterationCount) + " states examined.")
 
+
 def startBFS(startState):
-        global iterationCount, backTrackingLinks
+    global iterationCount, backTrackingLinks
 
-        openStates = [startState]
-        closedStates = []
-        backTrackingLinks[Algorithm.HASHCODE(startState)] = -1
+    openStates = [startState]
+    closedStates = []
+    backTrackingLinks[Algorithm.HASHCODE(startState)] = -1
 
-        while openStates != []:
-            currentState = openStates[0]
-            del openStates[0]
-            closedStates.append(currentState)
+    while openStates != []:
+        currentState = openStates[0]
+        del openStates[0]
+        closedStates.append(currentState)
 
-            if Algorithm.GOAL_TEST(currentState):
-                print(Algorithm.GOAL_MESSAGE_FUNCTION(currentState))
-                backtrace(currentState)
-                return
+        if Algorithm.goalTest(currentState):
+            print(Algorithm.goalMessage(currentState))
+            backtrace(currentState)
+            return
 
-            iterationCount += 1
-            if iterationCount % 32 == 0:
-                print(".", end = "")
-                if iterationCount % 128 == 0:
-                    print("iterationCount = "+str(iterationCount))
-                    print("len(openStates) = " + str(len(openStates)))
-                    print("len(closedStates) = " + str(len(closedStates)))
+        iterationCount += 1
+        if iterationCount % 32 == 0:
+            print(".", end="")
+            if iterationCount % 128 == 0:
+                print("iterationCount = " + str(iterationCount))
+                print("len(openStates) = " + str(len(openStates)))
+                print("len(closedStates) = " + str(len(closedStates)))
 
-            statesArray = []
-            for op in Algorithm.OPERATORS:
-                if op.precond(currentState):
-                    newState = op.state_transf(currentState)
-                    if not occurs_in(newState, closedStates) and openStates.count(newState) == 0:
-                        statesArray.append(newState)
-                        backTrackingLinks[Algorithm.HASHCODE(newState)] = currentState
+        statesArray = []
+        for op in Algorithm.getOperations:
+            if op.precondition(currentState):
+                newState = op.state_transfer(currentState)
+                if not occurs_in(newState, closedStates) and openStates.count(newState) == 0:
+                    statesArray.append(newState)
+                    backTrackingLinks[Algorithm.HASHCODE(newState)] = currentState
 
-            for states in statesArray:
-                for index in range(len(openStates)):
-                    if Algorithm.DEEP_EQUALS(states, openStates[index]):
-                        del openStates[index]
-                        break;
+        for states in statesArray:
+            for index in range(len(openStates)):
+                if Algorithm.DEEP_EQUALS(states, openStates[index]):
+                    del openStates[index]
+                    break;
 
-
-            openStates = openStates + statesArray
+        openStates = openStates + statesArray
 
 
 def backtrace(state):
@@ -73,7 +72,7 @@ def backtrace(state):
     traceArray.reverse()
     print("Traced Solution: ")
     for state in traceArray:
-        print(Algorithm.DESCRIBE_STATE(state))
+        print(Algorithm.describeCurrentState(state))
     return traceArray
 
 
@@ -82,6 +81,7 @@ def occurs_in(currentState, statesArray):
         if Algorithm.DEEP_EQUALS(currentState, state):
             return True
     return False
+
 
 if __name__ == "__main__":
     initializeBFS()

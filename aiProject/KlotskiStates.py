@@ -6,12 +6,12 @@ GOAL_BLOCK = 'A'
 #                           "D", "I", "_", "J"]
 
 
-START_STATE = lambda : ["E", "E", "_", "H",
-                        "B", "G", "_", "C",
-                        "B", "A", "A", "C",
-                        "D", "A", "A", "F",
-                        "D", "I", "J", "F"]
-# </INITIAL_STATE>
+START_STATE = lambda: ["E", "E", "_", "H",
+                       "B", "G", "_", "C",
+                       "B", "A", "A", "C",
+                       "D", "A", "A", "F",
+                       "D", "I", "J", "F"]
+
 
 # id = id of CHARACTER
 # x = top left starting x
@@ -20,8 +20,7 @@ START_STATE = lambda : ["E", "E", "_", "H",
 # h = how long to the bottom
 
 # defining can move precond
-class Piece:
-    # constructor
+class Object:
     def __init__(self, id, x, y, w, h):
         self.id = id
         self.x = x
@@ -29,21 +28,14 @@ class Piece:
         self.w = w
         self.h = h
 
-    # string representation of the piece
-    # for DEBUG purposes
-    def __str__(self):
-        return self.id + " " + str(int(self.x)) + " " + str(int(self.y)) \
-               + " " + str(int(self.w)) + " " + str(int(self.h))
-
     # Algorithm to determine whether we can move or not
-    # precond defining whether or not this piece can move in a certain
-    # direction given a current state
     def can_move(self, state, direction):
         w = int(self.w)
         h = int(self.h)
         x = int(self.x)
         y = int(self.y)
         # MAXIMUM MOVEMENT
+
         try:
             move = 1
             if direction == 1 or direction == 2:
@@ -72,32 +64,25 @@ class Piece:
             print(e)
 
 
-# returns a message when the goal is reached
-def goal_message(s):
-    return "Solved!"
+def goal_message(state):
+    return "Solution found."
 
 
-# Performs an appropriately deep copy of a state,
-# for use by operators in creating new states.
-def copy_state(s):
-    new_state = list(s)
+# Copies state -- used by Operators
+def copy_state(state):
+    new_state = list(state)
     return new_state
 
 
-# determines whether or not the two states are indentical by value
-def DEEP_EQUALS(s1, s2):
-    for i in range(len(s1)):
-        if s1[i] != s2[i]:
+# deep equals check for two states
+def DEEP_EQUALS(state1, state2):
+    for i in range(len(state1)):
+        if state1[i] != state2[i]:
             return False
     return True
 
 
-# string representation of the state of the game as shown:
-# A B B C
-# A B B C
-# D E E F
-# D G H F
-# I _ _ J
+# String representation
 def printCurrentState(state):
     result = ""
     for row in range(5):
@@ -115,44 +100,44 @@ def HASHCODE(state):
 
 
 class Operator:
-    def __init__(self, name, precond, state_transf):
+    def __init__(self, name, precondition, state_transfer):
         self.name = name
-        self.precond = precond
-        self.state_transf = state_transf
+        self.precondition = precondition
+        self.state_transfer = state_transfer
 
-    def is_applicable(self, s):
-        return self.precond(s)
+    def is_applicable(self, state):
+        return self.precondition(state)
 
-    def apply(self, s):
-        return self.state_transf(s)
+    def apply(self, state):
+        return self.state_transfer(state)
 
 
-# WIP
-def move(s, tile, dir):
+# movement function to move the tile into the right place
+def move(state, tile, direction):
     # Based on the assumption it is legal to move and tile is available
-    new_state = copy_state(s)
-    curr_index = tile.y * 4 + tile.x
+    new_state = copy_state(state)
+    current_index = tile.y * 4 + tile.x
     for width in range(tile.w):
         for height in range(tile.h):
-            tile_index = int(curr_index + width + height * 4)
+            tile_index = int(current_index + width + height * 4)
 
-            if dir == 3:
-                new_state[tile_index + 4] = s[tile_index]
+            if direction == 3:
+                new_state[tile_index + 4] = state[tile_index]
                 if height == 0:
                     new_state[tile_index] = "_"
 
-            elif dir == 1:
-                new_state[tile_index - 4] = s[tile_index]
+            elif direction == 1:
+                new_state[tile_index - 4] = state[tile_index]
                 if height == tile.h - 1:
                     new_state[tile_index] = "_"
 
-            elif dir == 0:
-                new_state[tile_index + 1] = s[tile_index]
+            elif direction == 0:
+                new_state[tile_index + 1] = state[tile_index]
                 if width == 0:
                     new_state[tile_index] = "_"
 
             else:
-                new_state[tile_index - 1] = s[tile_index]
+                new_state[tile_index - 1] = state[tile_index]
                 if width == tile.w - 1:
                     new_state[tile_index] = "_"
     return new_state
@@ -165,28 +150,27 @@ def goal_test(state):
            state[17] == GOAL_BLOCK and state[18] == GOAL_BLOCK
 
 
+# 1 = NORTH, 3 = SOUTH, 2 = WEST, 0 = EAST
 #    1
 # 2     0
 #    3
-def translate_dir(num):
-    dir = ''
+def translate_direction(num):
     if num == 0:
-        dir = 'east'
+        direction = 'east'
     elif num == 1:
-        dir = 'north'
+        direction = 'north'
     elif num == 2:
-        dir = 'west'
+        direction = 'west'
     else:
-        dir = 'south'
-    return dir
+        direction = 'south'
+    return direction
 
 
-def can_move(s, piece, direction):
-    return piece.can_move(s, direction)
+def can_move(state, piece, direction):
+    return piece.can_move(state, direction)
 
 
-# creates a list of all possible combinations of tiles to
-# direction = (0, 1, 2, 3) and returns it
+# generates a combo list of tiles to direction and returns it
 def combo_list():
     ls = []
     for tile in sorted(list(set(START_STATE()) - set(['_']))):
@@ -195,8 +179,7 @@ def combo_list():
     return ls
 
 
-# makes a piece object given a tile and the state locating that tile
-# and returns it
+# Piece object generator
 def make_piece(state, tile):
     index = state.index(tile)
     curr_col = index % 4
@@ -207,32 +190,20 @@ def make_piece(state, tile):
         shape[0] += 1
     if state[(index + 4) % len(state)] == state[index]:
         shape[1] += 1
-    return Piece(state[index], curr_col, curr_row, shape[0], shape[1])
+    return Object(state[index], curr_col, curr_row, shape[0], shape[1])
 
 
-# <OPERATORS>
-OPERATORS = [Operator("Move tile " + str(tile) + " to the " + str(translate_dir(direction)),
-                      lambda s, p=tile, q=direction: can_move(s, make_piece(s, p), q),
-                      lambda s, p=tile, q=direction: move(s, make_piece(s, p), q))
-             for (tile, direction) in combo_list()]
-# </OPERATORS>
+getOperations = [Operator("Move tile " + str(tile) + " to the " + str(translate_direction(direction)),
+                          lambda s, p=tile, q=direction: can_move(s, make_piece(s, p), q),
+                          lambda s, p=tile, q=direction: move(s, make_piece(s, p), q))
+                 for (tile, direction) in combo_list()]
+
+goalTest = lambda s: goal_test(s)
+
+goalMessage = lambda s: goal_message(s)
 
 
-# <GOAL_TEST> (optional)
-GOAL_TEST = lambda s: goal_test(s)
-# </GOAL_TEST>
-
-
-# <GOAL_MESSAGE_FUNCTION> (optional)
-GOAL_MESSAGE_FUNCTION = lambda s: goal_message(s)
-
-
-# </GOAL_MESSAGE_FUNCTION>
-
-
-# totals up the number of tile square beneath the goal block
-# including whether or not the empty spaces are adjacent
-# and returns that value
+# Prefers adjacency criteria for blank spaces + totals up single # of tiles underneath lower Y of Goal Block A.
 def heuristicFunction(s):
     goal_y = int(s.index(GOAL_BLOCK) / 4) + 1
     total = 0
@@ -246,22 +217,26 @@ def heuristicFunction(s):
 
     for key in sorted(set(s) - set(['_'])):  # all tiles
         piece = make_piece(s, key)  # now you have piece object
+        # starting coordinate Y of piece is lower than lower Y coordinate of Goal Block then increase heuristic
         if (piece.y > goal_y):
             total += piece.w * piece.h
     return int(total)
 
 
-HEURISTICS = {'heuristicFunction': heuristicFunction}
+# define what kind of heuristic for import_sys privileges to run from command line
+heuristic = {'heuristicFunction': heuristicFunction}
 
 
+# useless
 def render_state(s):
     return printCurrentState(s)
 
-def DESCRIBE_STATE(state):
+
+def describeCurrentState(state):
     result = ""
     for row in range(5):
         result = result + "   "
-        for col in range (4):
+        for col in range(4):
             result = result + (str(state[4 * row + col]) + " ")
         result = result + "\n"
     return result
