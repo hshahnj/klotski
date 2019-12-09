@@ -1,15 +1,19 @@
-
 GOAL_BLOCK = 'A'
-CREATE_INITIAL_STATE = lambda : ["B", "A", "A", "C",
-                                 "B", "A", "A", "C",
-                                 "D", "E", "E", "F",
-                                 "D", "G", "H", "F",
-                                 "I", "_", "_", "J"]
-#</INITIAL_STATE>
+# START_STATE = lambda :   ["B", "A", "A", "C",
+#                           "B", "A", "A", "C",
+#                           "_", "E", "E", "F",
+#                           "D", "G", "H", "F",
+#                           "D", "I", "_", "J"]
 
 
+START_STATE = lambda : ["E", "E", "_", "H",
+                        "B", "G", "_", "C",
+                        "B", "A", "A", "C",
+                        "D", "A", "A", "F",
+                        "D", "I", "J", "F"]
+# </INITIAL_STATE>
 
-# id = ALPHA_CHAR
+# id = id of CHARACTER
 # x = top left starting x
 # y = top left starting y
 # w = how wide to the right
@@ -29,7 +33,7 @@ class Piece:
     # for DEBUG purposes
     def __str__(self):
         return self.id + " " + str(int(self.x)) + " " + str(int(self.y)) \
-        + " " + str(int(self.w)) + " " + str(int(self.h))
+               + " " + str(int(self.w)) + " " + str(int(self.h))
 
     # Algorithm to determine whether we can move or not
     # precond defining whether or not this piece can move in a certain
@@ -39,7 +43,7 @@ class Piece:
         h = int(self.h)
         x = int(self.x)
         y = int(self.y)
-        #MAXIMUM MOVEMENT
+        # MAXIMUM MOVEMENT
         try:
             move = 1
             if direction == 1 or direction == 2:
@@ -51,14 +55,14 @@ class Piece:
             if direction % 2 == 0:
                 for i in range(h):
                     if 0 <= x + move < 4:
-                        if state[4*(y + i) + x + move] != "_":
+                        if state[4 * (y + i) + x + move] != "_":
                             return False
                     else:
                         return False
             else:
                 for i in range(w):
                     if 0 <= y + move < 5:
-                        if state[4*(y + move) + (x + i)] != "_":
+                        if state[4 * (y + move) + (x + i)] != "_":
                             return False
                     else:
                         return False
@@ -68,11 +72,9 @@ class Piece:
             print(e)
 
 
-
 # returns a message when the goal is reached
 def goal_message(s):
     return "Solved!"
-
 
 
 # Performs an appropriately deep copy of a state,
@@ -80,6 +82,7 @@ def goal_message(s):
 def copy_state(s):
     new_state = list(s)
     return new_state
+
 
 # determines whether or not the two states are indentical by value
 def DEEP_EQUALS(s1, s2):
@@ -99,7 +102,7 @@ def printCurrentState(state):
     result = ""
     for row in range(5):
         result = result + "   "
-        for col in range (4):
+        for col in range(4):
             result = result + (str(state[4 * row + col]) + " ")
         result = result + "\n"
     return result
@@ -109,7 +112,6 @@ def printCurrentState(state):
 # are guaranteed to be unique
 def HASHCODE(state):
     return printCurrentState(state)
-
 
 
 class Operator:
@@ -124,12 +126,35 @@ class Operator:
     def apply(self, s):
         return self.state_transf(s)
 
-#WIP
-def move(s, tile, dir):
-    
-      #Based on the assumption it is legal to move and tile is available
-    new_state = copy_state(s)
 
+# WIP
+def move(s, tile, dir):
+    # Based on the assumption it is legal to move and tile is available
+    new_state = copy_state(s)
+    curr_index = tile.y * 4 + tile.x
+    for width in range(tile.w):
+        for height in range(tile.h):
+            tile_index = int(curr_index + width + height * 4)
+
+            if dir == 3:
+                new_state[tile_index + 4] = s[tile_index]
+                if height == 0:
+                    new_state[tile_index] = "_"
+
+            elif dir == 1:
+                new_state[tile_index - 4] = s[tile_index]
+                if height == tile.h - 1:
+                    new_state[tile_index] = "_"
+
+            elif dir == 0:
+                new_state[tile_index + 1] = s[tile_index]
+                if width == 0:
+                    new_state[tile_index] = "_"
+
+            else:
+                new_state[tile_index - 1] = s[tile_index]
+                if width == tile.w - 1:
+                    new_state[tile_index] = "_"
     return new_state
 
 
@@ -138,7 +163,6 @@ def move(s, tile, dir):
 def goal_test(state):
     return state[13] == GOAL_BLOCK and state[14] == GOAL_BLOCK and \
            state[17] == GOAL_BLOCK and state[18] == GOAL_BLOCK
-
 
 
 #    1
@@ -157,17 +181,15 @@ def translate_dir(num):
     return dir
 
 
-
 def can_move(s, piece, direction):
     return piece.can_move(s, direction)
-
 
 
 # creates a list of all possible combinations of tiles to
 # direction = (0, 1, 2, 3) and returns it
 def combo_list():
     ls = []
-    for tile in sorted(list(set(CREATE_INITIAL_STATE()) - set(['_']))):
+    for tile in sorted(list(set(START_STATE()) - set(['_']))):
         for i in range(4):
             ls.append((tile, i))
     return ls
@@ -180,32 +202,32 @@ def make_piece(state, tile):
     curr_col = index % 4
     curr_row = int(index / 4)
 
-    shape = [1,1]
-    if state[(index + 1)%len(state)] == state[index]: #finds the axb value
+    shape = [1, 1]
+    if state[(index + 1) % len(state)] == state[index]:  # finds the axb value
         shape[0] += 1
-    if state[(index + 4)%len(state)] == state[index]:
+    if state[(index + 4) % len(state)] == state[index]:
         shape[1] += 1
     return Piece(state[index], curr_col, curr_row, shape[0], shape[1])
 
 
-
-#<OPERATORS>
+# <OPERATORS>
 OPERATORS = [Operator("Move tile " + str(tile) + " to the " + str(translate_dir(direction)),
                       lambda s, p=tile, q=direction: can_move(s, make_piece(s, p), q),
                       lambda s, p=tile, q=direction: move(s, make_piece(s, p), q))
              for (tile, direction) in combo_list()]
-#</OPERATORS>
+# </OPERATORS>
 
 
-#<GOAL_TEST> (optional)
+# <GOAL_TEST> (optional)
 GOAL_TEST = lambda s: goal_test(s)
-#</GOAL_TEST>
+# </GOAL_TEST>
 
 
-#<GOAL_MESSAGE_FUNCTION> (optional)
+# <GOAL_MESSAGE_FUNCTION> (optional)
 GOAL_MESSAGE_FUNCTION = lambda s: goal_message(s)
-#</GOAL_MESSAGE_FUNCTION>
 
+
+# </GOAL_MESSAGE_FUNCTION>
 
 
 # totals up the number of tile square beneath the goal block
@@ -215,23 +237,31 @@ def heuristicFunction(s):
     goal_y = int(s.index(GOAL_BLOCK) / 4) + 1
     total = 0
     empty_index = int(s.index('_'))
-    #check if edge case
-    #First case shows that empty index is below so prioritized
-    #Second case checks if the spaces are adjacent
-    #Not perfect yet
-    if ((empty_index+1)%4 != 0 and s[(empty_index+1)%4] != '_') or (s[(empty_index + 4) % 20] != '_'):
+    # check if edge case
+    # First case shows that empty index is below so prioritized
+    # Second case checks if the spaces are adjacent
+    # Not perfect yet
+    if ((empty_index + 1) % 4 != 0 and s[(empty_index + 1) % 4] != '_') or (s[(empty_index + 4) % 20] != '_'):
         total += 2
 
-    for key in sorted(set(s) - set(['_'])): #all tiles
-        piece = make_piece(s, key) #now you have piece object
+    for key in sorted(set(s) - set(['_'])):  # all tiles
+        piece = make_piece(s, key)  # now you have piece object
         if (piece.y > goal_y):
             total += piece.w * piece.h
     return int(total)
 
 
-
-HEURISTICS = {'heuristicFunction':heuristicFunction}
+HEURISTICS = {'heuristicFunction': heuristicFunction}
 
 
 def render_state(s):
     return printCurrentState(s)
+
+def DESCRIBE_STATE(state):
+    result = ""
+    for row in range(5):
+        result = result + "   "
+        for col in range (4):
+            result = result + (str(state[4 * row + col]) + " ")
+        result = result + "\n"
+    return result
