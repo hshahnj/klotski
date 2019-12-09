@@ -11,6 +11,8 @@ heuristics = Algorithm.heuristic[heuristicChoice]
 # startState = Algorithm.START_STATE()
 # heuristics = Algorithm.heuristic[heuristicChoice]
 
+print('\nAStar Algorithm')
+
 # Counting # of iterations
 iterationCount = None
 
@@ -28,7 +30,7 @@ def initializeAStar():
     print(str(iterationCount) + " states examined.")
 
 
-# iterates through initial state using A* with given hueristics
+# iterates through initial state using A* with given heuristics
 # to solve until goal state
 def startAStar(startState):
     global iterationCount, backTrackingLinks

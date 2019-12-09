@@ -1,17 +1,17 @@
 GOAL_BLOCK = 'A'
 
-START_STATE = lambda: ["B", "A", "A", "C",
-                       "B", "A", "A", "C",
-                       "D", "E", "E", "F",
-                       "D", "G", "H", "F",
-                       "I", "_", "_", "J"]
-
-
-# START_STATE = lambda: ["E", "E", "_", "H",
-#                        "B", "G", "_", "C",
+# START_STATE = lambda: ["B", "A", "A", "C",
 #                        "B", "A", "A", "C",
-#                        "D", "A", "A", "F",
-#                        "D", "I", "J", "F"]
+#                        "D", "E", "E", "F",
+#                        "D", "G", "H", "F",
+#                        "I", "_", "_", "J"]
+
+
+START_STATE = lambda: ["E", "E", "_", "H",
+                       "B", "G", "_", "C",
+                       "B", "A", "A", "C",
+                       "D", "A", "A", "F",
+                       "D", "I", "J", "F"]
 
 
 # id = id of CHARACTER
