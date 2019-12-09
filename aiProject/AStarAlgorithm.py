@@ -1,17 +1,15 @@
 import importlib
+import sys
 
-# # #INIT
-# Algorithm = importlib.import_module(sys.argv[1]) #Import Module
-# heuristic_choice = sys.argv[2]
-# print(Algorithm)
-# print(type(Algorithm))
-# print(heuristic_choice)
-
-
-Algorithm = importlib.import_module("KlotskiStates")
-heuristicChoice = "heuristicFunction"
+Algorithm = importlib.import_module(sys.argv[1])  # Import Module
+heuristicChoice = sys.argv[2]
 startState = Algorithm.START_STATE()
 heuristics = Algorithm.heuristic[heuristicChoice]
+
+# Algorithm = importlib.import_module("KlotskiStates")
+# heuristicChoice = "heuristicFunction"
+# startState = Algorithm.START_STATE()
+# heuristics = Algorithm.heuristic[heuristicChoice]
 
 # Counting # of iterations
 iterationCount = None

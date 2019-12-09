@@ -1,16 +1,17 @@
 GOAL_BLOCK = 'A'
-# START_STATE = lambda :   ["B", "A", "A", "C",
-#                           "B", "A", "A", "C",
-#                           "_", "E", "E", "F",
-#                           "D", "G", "H", "F",
-#                           "D", "I", "_", "J"]
 
-
-START_STATE = lambda: ["E", "E", "_", "H",
-                       "B", "G", "_", "C",
+START_STATE = lambda: ["B", "A", "A", "C",
                        "B", "A", "A", "C",
-                       "D", "A", "A", "F",
-                       "D", "I", "J", "F"]
+                       "D", "E", "E", "F",
+                       "D", "G", "H", "F",
+                       "I", "_", "_", "J"]
+
+
+# START_STATE = lambda: ["E", "E", "_", "H",
+#                        "B", "G", "_", "C",
+#                        "B", "A", "A", "C",
+#                        "D", "A", "A", "F",
+#                        "D", "I", "J", "F"]
 
 
 # id = id of CHARACTER
@@ -211,7 +212,6 @@ def heuristicFunction(s):
     # check if edge case
     # First case shows that empty index is below so prioritized
     # Second case checks if the spaces are adjacent
-    # Not perfect yet
     if ((empty_index + 1) % 4 != 0 and s[(empty_index + 1) % 4] != '_') or (s[(empty_index + 4) % 20] != '_'):
         total += 2
 

@@ -1,6 +1,11 @@
 import importlib
+import sys
 
-Algorithm = importlib.import_module('KlotskiStates')
+Algorithm = importlib.import_module(sys.argv[1])  # Import Module
+startState = Algorithm.START_STATE()
+
+# Algorithm = importlib.import_module('KlotskiStates')
+
 
 print('\nBFS Algorithm')
 iterationCount = None
